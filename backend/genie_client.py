@@ -1,22 +1,16 @@
-import os
+from config import settings
 import time
 import requests
-from dotenv import load_dotenv
-
-load_dotenv()
-
-HOST = os.getenv("DATABRICKS_HOST")
-TOKEN = os.getenv("DATABRICKS_TOKEN")
-SPACE_ID = os.getenv("GENIE_SPACE_ID")
 
 HEADERS = {
-    "Authorization": f"Bearer {TOKEN}",
+    "Authorization": f"Bearer {settings.DATABRICKS_TOKEN}",
     "Content-Type": "application/json"
 }
 
 def start_conversation(question: str):
-    url = f"{HOST}/api/2.0/genie/spaces/{SPACE_ID}/start-conversation"
+    url = f"{settings.DATABRICKS_HOST}/api/2.0/genie/spaces/{settings.GENIE_SPACE_ID}/start-conversation"
     resp = requests.post(url, headers=HEADERS, json={"content": question})
+
     resp.raise_for_status()
     data = resp.json()
     conversation_id = data.get("conversation_id")

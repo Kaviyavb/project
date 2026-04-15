@@ -3,17 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from config import settings
 import genie_client
 import auth0_client
 import os
 import requests
 from itsdangerous import URLSafeSerializer
 
+print(f"[INIT] Starting Genie AI with domain: {settings.AUTH0_DOMAIN}", flush=True)
+
 app = FastAPI(title="Genie AI Upgraded")
 
 # Security Configuration
-APP_SECRET_KEY = os.getenv("APP_SECRET_KEY", "super-secret-default")
-serializer = URLSafeSerializer(APP_SECRET_KEY)
+serializer = URLSafeSerializer(settings.APP_SECRET_KEY)
 
 # Define frontend path for reuse
 frontend_path = os.path.join(os.path.dirname(__file__), "frontend")
@@ -117,8 +119,8 @@ async def chat(request: ChatRequest, req: Request):
     
     if statement_id:
         try:
-            host = os.getenv("DATABRICKS_HOST").rstrip("/")
-            token = os.getenv("DATABRICKS_TOKEN")
+            host = settings.DATABRICKS_HOST.rstrip("/")
+            token = settings.DATABRICKS_TOKEN
             url = f"{host}/api/2.0/sql/statements/{statement_id}"
             headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
             
