@@ -57,7 +57,8 @@ def extract_full_response(result: dict) -> dict:
 
 def ask_genie(question: str) -> dict:
     conversation_id, message_id = start_conversation(question)
-    url = f"{HOST}/api/2.0/genie/spaces/{SPACE_ID}/conversations/{conversation_id}/messages/{message_id}"
+    url = f"{settings.DATABRICKS_HOST}/api/2.0/genie/spaces/{settings.GENIE_SPACE_ID}/conversations/{conversation_id}/messages/{message_id}"
+
     
     # Polling logic remains similar but returns full response
     for _ in range(25):

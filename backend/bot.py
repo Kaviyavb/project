@@ -28,9 +28,9 @@ class GenieBot(ActivityHandler):
         try:
             # For Teams bot, we still use the standard full result logic
             # as simple streaming isn't as trivial over Bot Framework activities
-            conversation_id, message_id = genie_client.start_conversation(user_text)
-            answer = genie_client.get_message_result(conversation_id, message_id)
-            await turn_context.send_activity(answer)
+            result = genie_client.ask_genie(user_text)
+            await turn_context.send_activity(result.get("answer", "No response found."))
+
         except Exception as e:
             await turn_context.send_activity(f"Error: {str(e)}")
 
