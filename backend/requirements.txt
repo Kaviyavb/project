@@ -9,3 +9,4 @@ python-jose[cryptography]
 pyjwt
 cryptography
 aiofiles
+pydantic-settings

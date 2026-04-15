@@ -3,13 +3,16 @@ import httpx
 
 def get_login_url():
     """Returns the Auth0 authorization URL to start the OAuth2 flow."""
-    return (
+    url = (
         f"https://{settings.AUTH0_DOMAIN}/authorize?"
         f"response_type=code&"
         f"client_id={settings.AUTH0_CLIENT_ID}&"
         f"redirect_uri={settings.AUTH0_CALLBACK_URL}&"
         f"scope=openid%20profile%20email"
     )
+    print(f"[AUTH] Generated Redirect URL: {url}", flush=True)
+    return url
+
 
 async def exchange_code_for_token(code: str):
     """Exchanges the Auth0 authorization code for an access token."""
