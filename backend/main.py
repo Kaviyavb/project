@@ -79,15 +79,18 @@ async def auth_callback(code: str, response: Response):
         print(f"[AUTH] Success! User identified: {user_session['name']}", flush=True)
         
         response = RedirectResponse(url="/")
-        # Ensure cookie is accessible for local development
+        # Secure cookies for production (HTTPS)
+        is_secure = settings.BASE_URL.startswith("https")
+        
         response.set_cookie(
             key="genie_session", 
             value=signed_session, 
             httponly=True,
             samesite="lax",
-            secure=False # Set to True in production with HTTPS
+            secure=is_secure
         )
         return response
+
     except Exception as e:
         print(f"[AUTH] Error in callback: {e}", flush=True)
         return RedirectResponse(url="/login?error=auth_failed")

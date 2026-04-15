@@ -7,11 +7,14 @@ class Settings(BaseSettings):
     DATABRICKS_TOKEN: str
     GENIE_SPACE_ID: str
 
+    # Deployment settings
+    BASE_URL: str = "http://localhost:8000"
+
     # Auth0 settings
     AUTH0_DOMAIN: str
     AUTH0_CLIENT_ID: str
     AUTH0_CLIENT_SECRET: str
-    AUTH0_CALLBACK_URL: str
+
 
     # Security
     APP_SECRET_KEY: str = "super-secret-default"
