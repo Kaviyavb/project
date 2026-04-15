@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genie AI | Modular Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .sidebar-collapse {
+            width: 0 !important;
+            transform: translateX(-100%);
+            position: absolute;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                height: 100vh;
+                z-index: 1000;
+                width: 75%;
+            }
+
+            .sidebar-closed #sidebar {
+                transform: translateX(-100%);
+            }
+
+            #main-content {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden sidebar-closed">
+
+    <!-- Responsive Sidebar -->
+    <aside id="sidebar"
+        class="w-80 bg-slate-900 h-full flex flex-col transition-all duration-300 z-50 overflow-hidden shrink-0 border-r border-white/5 shadow-2xl">
+        <div class="p-6 md:p-8">
+            <div class="flex items-center justify-between text-white mb-10">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center text-2xl md:text-3xl shadow-lg ring-4 ring-blue-500/20">
+                        🧞</div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-lg md:text-xl leading-tight">Genie AI</span>
+                        <span
+                            class="text-[9px] md:text-[10px] uppercase text-blue-400 font-bold tracking-widest">Enterprise
+                            PRO</span>
+                    </div>
+                </div>
+                <button onclick="toggleSidebarSync()" class="md:hidden p-2 text-slate-400 hover:text-white"><i
+                        data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <button id="new-chat-btn"
+                class="w-full flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 text-white p-3 md:p-4 rounded-xl border border-white/10 transition-all active:scale-95">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                <span class="font-semibold text-xs md:text-sm">Initiate Insight</span>
+            </button>
+        </div>
+
+        <nav class="flex-1 px-4 overflow-y-auto custom-scroll">
+            <div class="flex items-center justify-between px-4 mb-4">
+                <span class="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">History</span>
+            </div>
+            <div id="history-list" class="space-y-1 md:space-y-2"></div>
+        </nav>
+
+        <div class="p-4 md:p-6 bg-slate-900/50 border-t border-white/5">
+            <div class="flex items-center gap-3 md:gap-4 bg-white/5 p-2 md:p-3 rounded-2xl border border-white/5">
+                <img id="user-avatar" class="w-8 h-8 md:w-10 md:h-10 rounded-full ring-2 ring-blue-500/50 object-cover"
+                    src="" alt="Profile">
+                <div class="flex-1 min-w-0">
+                    <p id="username-display" class="text-[11px] md:text-xs font-bold text-white truncate">Loading...</p>
+                    <p id="user-email" class="text-[9px] md:text-[10px] text-slate-500 font-medium truncate">...</p>
+                </div>
+                <button onclick="handleLogout()" class="p-2 text-slate-500 hover:text-red-400 transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 flex flex-col min-w-0 bg-slate-50 relative">
+        <header
+            class="h-16 md:h-20 bg-white/70 backdrop-blur-xl border-b border-slate-200 flex items-center justify-between px-4 md:px-8 sticky top-0 z-40">
+            <div class="flex items-center gap-3 md:gap-6">
+                <button onclick="toggleSidebarSync()"
+                    class="p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors"><i data-lucide="menu"
+                        class="w-6 h-6"></i></button>
+                <div class="flex items-center gap-2 text-xs md:text-sm">
+                    <span class="text-slate-400 font-medium hidden sm:inline">Session /</span>
+                    <span class="text-slate-900 font-bold truncate max-w-[150px] md:max-w-none" id="current-title">New
+                        Intelligence</span>
+                </div>
+            </div>
+            <div
+                class="flex items-center gap-2 bg-green-50 px-3 md:px-4 py-1.5 md:py-2 rounded-full ring-1 ring-green-100">
+                <span class="text-[9px] md:text-[10px] font-bold text-green-700 uppercase">Authenticated</span>
+            </div>
+        </header>
+
+        <div id="chat-canvas" class="flex-1 overflow-y-auto custom-scroll px-4 md:px-6 py-6 md:py-10">
+            <div id="welcome-msg"
+                class="h-full flex flex-col items-center justify-center max-w-2xl mx-auto text-center space-y-6 md:space-y-8">
+                <div
+                    class="w-20 h-20 md:w-24 md:h-24 bg-white rounded-3xl shadow-2xl flex items-center justify-center text-4xl md:text-5xl transform -rotate-3 hover:rotate-0 transition-all duration-500">
+                    🧞</div>
+                <div class="space-y-2">
+                    <h1 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-none px-4">Your
+                        Data,<br><span class="text-blue-600">Instantly Fluent.</span></h1>
+                    <p class="text-slate-500 text-sm md:text-lg font-medium leading-relaxed">Select a module to begin or
+                        upload a file (+).</p>
+                </div>
+
+                <!-- Restored Grid Cards -->
+                <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 px-2">
+                    <button onclick="setQuery('Generate a SQL query for ')"
+                        class="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all text-left group">
+                        <i data-lucide="code"
+                            class="w-5 h-5 md:w-6 md:h-6 text-blue-600 mb-3 group-hover:scale-110 transition-transform"></i>
+                        <p class="font-bold text-slate-900 text-xs md:text-sm">💻 Code Generation</p>
+                        <p class="text-[10px] md:text-xs text-slate-400 mt-1">Translate English to SQL Logic.</p>
+                    </button>
+                    <button onclick="setQuery('Create a chart showing ')"
+                        class="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all text-left group">
+                        <i data-lucide="pie-chart"
+                            class="w-5 h-5 md:w-6 md:h-6 text-blue-600 mb-3 group-hover:scale-110 transition-transform"></i>
+                        <p class="font-bold text-slate-900 text-xs md:text-sm">📊 Data Visualization</p>
+                        <p class="text-[10px] md:text-xs text-slate-400 mt-1">Generate analytics instantly.</p>
+                    </button>
+                    <button onclick="setQuery('Explain the trends in ')"
+                        class="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all text-left group">
+                        <i data-lucide="message-square"
+                            class="w-5 h-5 md:w-6 md:h-6 text-blue-600 mb-3 group-hover:scale-110 transition-transform"></i>
+                        <p class="font-bold text-slate-900 text-xs md:text-sm">💬 Advanced Chat</p>
+                        <p class="text-[10px] md:text-xs text-slate-400 mt-1">Deep-dive conversational AI.</p>
+                    </button>
+                    <button onclick="setQuery('Summarize findings for ')"
+                        class="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all text-left group">
+                        <i data-lucide="file-text"
+                            class="w-5 h-5 md:w-6 md:h-6 text-blue-600 mb-3 group-hover:scale-110 transition-transform"></i>
+                        <p class="font-bold text-slate-900 text-xs md:text-sm">📝 Summarization</p>
+                        <p class="text-[10px] md:text-xs text-slate-400 mt-1">Audit records and trends.</p>
+                    </button>
+                </div>
+            </div>
+            <div id="message-container" class="max-w-4xl mx-auto space-y-6 md:space-y-8"></div>
+        </div>
+
+        <footer class="p-4 md:p-8 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
+            <div class="max-w-3xl mx-auto relative group">
+                <div
+                    class="bg-white rounded-2xl md:rounded-[1.5rem] border-2 border-slate-200 p-2 md:p-3 shadow-2xl focus-within:border-slate-900 transition-all flex items-end gap-2 md:gap-3 ring-4 md:ring-8 ring-slate-100">
+                    <label
+                        class="p-3 text-slate-500 hover:text-blue-600 cursor-pointer bg-slate-50 rounded-xl transition-colors hover:scale-105 active:scale-95">
+                        <i data-lucide="plus" class="w-5 h-5 md:w-6 md:h-6"></i>
+                        <input type="file" id="media-upload" class="hidden" multiple
+                            accept="image/*,audio/*,.pdf,.txt,.csv" onchange="handleMediaSelect(this)" />
+                    </label>
+                    <textarea id="ai-input" rows="1"
+                        class="flex-1 border-none outline-none focus:outline-none focus:ring-0 p-2 md:p-3 text-base md:text-lg font-medium text-slate-700 bg-transparent resize-none h-12 md:h-14"
+                        placeholder="Ask about your data..."></textarea>
+                    <button id="fire-request"
+                        class="w-12 h-12 md:w-14 md:h-14 bg-slate-900 disabled:bg-slate-200 text-white rounded-xl md:rounded-2xl flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all transition-colors"><i
+                            data-lucide="zap" class="w-5 h-5 md:w-6 md:h-6"></i></button>
+                </div>
+                <div id="media-feedback" class="absolute -top-12 left-0 right-0 flex gap-2 empty:hidden py-2 px-1">
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="app.js?v=5.1.0"></script>
+</body>
+
+</html>

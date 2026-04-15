@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+requests
+python-dotenv
+authlib
+httpx
+itsdangerous
+python-jose[cryptography]
+pyjwt
+cryptography
+aiofiles
