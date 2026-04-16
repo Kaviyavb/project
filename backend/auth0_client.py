@@ -27,7 +27,11 @@ async def exchange_code_for_token(code: str):
         "redirect_uri": callback_url,
     }
     async with httpx.AsyncClient() as client:
-        resp = await client.post(url, json=payload)
+        print(f"[AUTH] Exchanging code for token on domain: {settings.AUTH0_DOMAIN}", flush=True)
+        print(f"[AUTH] Config Check: ID={settings.AUTH0_CLIENT_ID[:5]}... Secret={len(settings.AUTH0_CLIENT_SECRET)} chars", flush=True)
+        resp = await client.post(url, data=payload)
+        if resp.status_code != 200:
+            print(f"[AUTH] Token exchange failed. Status: {resp.status_code}, Body: {resp.text}", flush=True)
         resp.raise_for_status()
         return resp.json()
 
