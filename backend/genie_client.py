@@ -60,9 +60,9 @@ def ask_genie(question: str) -> dict:
     url = f"{settings.DATABRICKS_HOST}/api/2.0/genie/spaces/{settings.GENIE_SPACE_ID}/conversations/{conversation_id}/messages/{message_id}"
 
     
-    # Polling logic remains similar but returns full response
-    for _ in range(25):
-        time.sleep(3)
+    # Optimized polling: checking more frequently (every 1s) for faster response times
+    for _ in range(60):
+        time.sleep(1)
         resp = requests.get(url, headers=HEADERS)
         resp.raise_for_status()
         result = resp.json()

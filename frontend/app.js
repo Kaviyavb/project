@@ -180,7 +180,7 @@ async function typeMessage(element, fullText, onFinish) {
         currentText += words[i] + " ";
         element.innerHTML = marked.parse(currentText);
         document.getElementById('chat-canvas').scrollTop = document.getElementById('chat-canvas').scrollHeight;
-        await new Promise(r => setTimeout(r, 20));
+        await new Promise(r => setTimeout(r, 5));
     }
     if (onFinish) onFinish();
 }
