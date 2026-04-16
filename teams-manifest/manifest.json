@@ -27,8 +27,8 @@
         {
             "entityId": "genieDashboard",
             "name": "Analytics Dashboard",
-            "contentUrl": "https://YOUR_NGROK_DOMAIN.ngrok-free.app/index.html",
-            "websiteUrl": "https://YOUR_NGROK_DOMAIN.ngrok-free.app/index.html",
+            "contentUrl": "https://project-wjgq.onrender.com/index.html",
+            "websiteUrl": "https://project-wjgq.onrender.com/index.html",
             "scopes": [
                 "personal"
             ]
@@ -50,8 +50,8 @@
         "messageTeamMembers"
     ],
     "validDomains": [
-        "*.ngrok.io",
         "*.ngrok-free.app",
+        "project-wjgq.onrender.com",
         "dev-ddp66lcucchdbthu.us.auth0.com"
     ]
 }
