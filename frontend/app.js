@@ -4,6 +4,15 @@ let chatsHistory = JSON.parse(localStorage.getItem('genie_v22_history') || '[]')
 let currentChatId = null;
 let currentUser = null;
 
+// --- New Chat Handlers ---
+function initiateNewChat() {
+    currentConversation = [];
+    currentChatId = null;
+    document.getElementById('current-title').innerText = 'New Intelligence';
+    renderFlow();
+    setTimeout(() => document.getElementById('ai-input').focus(), 100);
+}
+
 // --- Auth Architecture ---
 async function fetchUser() {
     try {
@@ -355,3 +364,4 @@ document.getElementById('ai-input').oninput = (e) => {
 };
 document.getElementById('ai-input').onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleRequest(); } };
 document.getElementById('fire-request').onclick = handleRequest;
+document.getElementById('new-chat-btn').onclick = initiateNewChat;

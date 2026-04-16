@@ -10,3 +10,4 @@ pyjwt
 cryptography
 aiofiles
 pydantic-settings
+auth0-api-python
