@@ -3,7 +3,6 @@
     "manifestVersion": "1.17",
     "version": "1.0.1",
     "id": "e3a1f1a0-1234-4a5b-bc6d-7e8f90123456",
-    "packageName": "com.databricks.genie.ai",
     "developer": {
         "name": "Databricks Genie AI Team",
         "websiteUrl": "https://www.databricks.com",
@@ -12,7 +11,7 @@
     },
     "icons": {
         "color": "color.png",
-        "outline": "color.png"
+        "outline": "outline.png"
     },
     "name": {
         "short": "Genie AI",
@@ -33,10 +32,6 @@
                 "personal"
             ]
         }
-    ],
-    "permissions": [
-        "identity",
-        "messageTeamMembers"
     ],
     "validDomains": [
         "project-wjgq.onrender.com",
