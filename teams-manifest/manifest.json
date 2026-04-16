@@ -28,7 +28,7 @@
             "entityId": "genieDashboard",
             "name": "Analytics Dashboard",
             "contentUrl": "https://project-wjgq.onrender.com/index.html",
-            "websiteUrl": "https://project-wjgq.onrender.com/index.html",
+            "websiteUrl": "https://project-wjgq.onrender.com",
             "scopes": [
                 "personal"
             ]
@@ -50,7 +50,6 @@
         "messageTeamMembers"
     ],
     "validDomains": [
-        "*.ngrok-free.app",
         "project-wjgq.onrender.com",
         "dev-ddp66lcucchdbthu.us.auth0.com"
     ]
