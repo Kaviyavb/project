@@ -4,7 +4,7 @@ from urllib.parse import quote
 
 def get_login_url():
     """Returns the Auth0 authorization URL to start the OAuth2 flow."""
-    callback_url = f"{settings.BASE_URL}/auth/callback"
+    callback_url = f"{settings.BASE_URL.rstrip('/')}/auth/callback"
     url = (
         f"https://{settings.AUTH0_DOMAIN}/authorize?"
         f"response_type=code&"
@@ -17,7 +17,7 @@ def get_login_url():
 
 async def exchange_code_for_token(code: str):
     """Exchanges the Auth0 authorization code for an access token."""
-    callback_url = f"{settings.BASE_URL}/auth/callback"
+    callback_url = f"{settings.BASE_URL.rstrip('/')}/auth/callback"
     url = f"https://{settings.AUTH0_DOMAIN}/oauth/token"
     payload = {
         "grant_type": "authorization_code",
@@ -42,7 +42,7 @@ async def get_user_info(access_token: str):
 
 def get_logout_url():
     """Returns the Auth0 logout URL to clear the Auth0 session."""
-    returnTo = quote(f"{settings.BASE_URL}/login")
+    returnTo = quote(f"{settings.BASE_URL.rstrip('/')}/login")
     return f"https://{settings.AUTH0_DOMAIN}/v2/logout?client_id={settings.AUTH0_CLIENT_ID}&returnTo={returnTo}"
 
 
