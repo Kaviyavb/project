@@ -91,8 +91,8 @@ async def auth_callback(code: str, response: Response, teams: bool = False):
             key="genie_session", 
             value=signed_session, 
             httponly=True,
-            samesite="lax",
-            secure=is_secure
+            samesite="none",  # Required for Teams Tab iframes
+            secure=True       # Required when samesite="none"
         )
         return response
 
@@ -105,15 +105,29 @@ async def auth_success():
     """Signals Teams that the authentication was successful."""
     return Response(content="""
         <html>
-            <body>
+            <head>
                 <script src="https://res.cdn.office.net/teams-js/2.19.0/js/MicrosoftTeams.min.js"></script>
+            </head>
+            <body style="background: #0f172a; color: white; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh;">
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                    <h1 style="font-size: 1.5rem; font-weight: bold;">Login Verified</h1>
+                    <p style="color: #94a3b8;">Finalizing session... this window should close automatically.</p>
+                </div>
                 <script>
                     microsoftTeams.app.initialize().then(() => {
+                        console.log("Notifying success to main tab...");
                         microsoftTeams.authentication.notifySuccess();
+                    }).catch(err => {
+                        console.error("Teams Init failed in popup", err);
+                        window.close(); // Fallback for standard browser popups
                     });
+                    
+                    // Fail-safe to ensure window closes
+                    setTimeout(() => { 
+                        try { window.close(); } catch(e) {} 
+                    }, 2000);
                 </script>
-                <h1>Authentication Successful</h1>
-                <p>Closing window...</p>
             </body>
         </html>
     """, media_type="text/html")

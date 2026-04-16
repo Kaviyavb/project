@@ -89,26 +89,34 @@
         }
 
         function inTeams() {
-            // Basic detection: check if in an iframe and if microsoftTeams initialized
             return window.self !== window.top || teamsHandshake;
         }
 
+        // Check if already authenticated to avoid loop
+        fetch('/api/me').then(resp => {
+            if (resp.ok) {
+                console.log("Already logged in, redirecting to dashboard...");
+                window.location.href = "/";
+            }
+        }).catch(err => console.log("Not logged in yet"));
+
         function startAuthFlow() {
             if (inTeams()) {
-                console.log("Starting Teams Auth popup...");
+                console.log("[TEAMS] Opening Auth Popup...");
                 microsoftTeams.authentication.authenticate({
                     url: window.location.origin + "/auth/start?teams=true",
                     width: 600,
                     height: 535
                 }).then(() => {
-                    console.log("Auth success from popup");
+                    console.log("[TEAMS] Popup success, reloading dashboard...");
                     window.location.href = "/";
                 }).catch(err => {
-                    console.error("Auth failed:", err);
+                    console.error("[TEAMS] Popup failed:", err);
+                    if (err === "CancelledByUser") return;
                     document.getElementById('error-message').classList.remove('hidden');
                 });
             } else {
-                console.log("Standard redirect auth...");
+                console.log("[WEB] Redirecting to login...");
                 window.location.href = "/auth/start";
             }
         }
