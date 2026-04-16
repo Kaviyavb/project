@@ -25,10 +25,10 @@ if not os.path.exists(frontend_path):
     if os.path.exists(parent_frontend):
         frontend_path = parent_frontend
 
-# Enable CORS (Updated for cookie support)
+# Enable CORS (Updated for local development and credentials)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[settings.BASE_URL, "http://localhost:8000", "http://127.0.0.1:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,8 +58,9 @@ async def login_page():
 
 @app.get("/auth/start")
 async def auth_start():
-    print("[AUTH] Starting login flow. Redirecting to Auth0.", flush=True)
-    return RedirectResponse(auth0_client.get_login_url())
+    login_url = auth0_client.get_login_url()
+    print(f"[AUTH] Starting login flow. Redirecting to: {login_url}", flush=True)
+    return RedirectResponse(url=login_url)
 
 @app.get("/auth/callback")
 async def auth_callback(code: str, response: Response):
@@ -164,5 +165,5 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=port,
-        reload=False
+        reload=True
     )
