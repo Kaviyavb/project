@@ -2,7 +2,7 @@
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
     "manifestVersion": "1.17",
     "version": "1.0.1",
-    "id": "e3a1f1a0-1234-4a5b-bc6d-7e8f90123456",
+    "id": "b3343bfc-b33b-4de9-97dc-e1c3adb3b591",
     "developer": {
         "name": "Databricks Genie AI Team",
         "websiteUrl": "https://www.databricks.com",
