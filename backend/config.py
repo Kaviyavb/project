@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
 from typing import Optional
 
 class Settings(BaseSettings):
@@ -9,6 +10,7 @@ class Settings(BaseSettings):
 
     # Deployment settings
     BASE_URL: str = "http://localhost:8000"
+
 
     # Auth0 settings
     AUTH0_DOMAIN: str
@@ -29,6 +31,11 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8", 
         extra="ignore"
     )
+
+    @field_validator("AUTH0_CLIENT_ID", "AUTH0_CLIENT_SECRET", "AUTH0_DOMAIN", "BASE_URL")
+    @classmethod
+    def strip_spaces(cls, v: str) -> str:
+        return v.strip() if v else v
 
 # Global settings instance
 settings = Settings()
