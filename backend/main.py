@@ -57,16 +57,16 @@ async def login_page():
     return FileResponse(os.path.join(frontend_path, "login.html"))
 
 @app.get("/auth/start")
-async def auth_start():
-    login_url = auth0_client.get_login_url()
-    print(f"[AUTH] Starting login flow. Redirecting to: {login_url}", flush=True)
+async def auth_start(teams: bool = False):
+    login_url = auth0_client.get_login_url(is_teams=teams)
+    print(f"[AUTH] Starting login flow (Teams={teams}). Redirecting to: {login_url}", flush=True)
     return RedirectResponse(url=login_url)
 
 @app.get("/auth/callback")
-async def auth_callback(code: str, response: Response):
-    print(f"[AUTH] Callback received with code: {code[:10]}...", flush=True)
+async def auth_callback(code: str, response: Response, teams: bool = False):
+    print(f"[AUTH] Callback received with code: {code[:10]}... (Teams={teams})", flush=True)
     try:
-        token_data = await auth0_client.exchange_code_for_token(code)
+        token_data = await auth0_client.exchange_code_for_token(code, is_teams=teams)
         access_token = token_data.get("access_token")
         user_info = await auth0_client.get_user_info(access_token)
         
@@ -79,7 +79,11 @@ async def auth_callback(code: str, response: Response):
         
         print(f"[AUTH] Success! User identified: {user_session['name']}", flush=True)
         
-        response = RedirectResponse(url="/")
+        target_url = "/"
+        if teams:
+            target_url = "/auth/success"
+            
+        response = RedirectResponse(url=target_url)
         # Secure cookies for production (HTTPS)
         is_secure = settings.BASE_URL.startswith("https")
         
@@ -95,6 +99,24 @@ async def auth_callback(code: str, response: Response):
     except Exception as e:
         print(f"[AUTH] Error in callback: {e}", flush=True)
         return RedirectResponse(url="/login?error=auth_failed")
+
+@app.get("/auth/success")
+async def auth_success():
+    """Signals Teams that the authentication was successful."""
+    return Response(content="""
+        <html>
+            <body>
+                <script src="https://res.cdn.office.net/teams-js/2.19.0/js/MicrosoftTeams.min.js"></script>
+                <script>
+                    microsoftTeams.app.initialize().then(() => {
+                        microsoftTeams.authentication.notifySuccess();
+                    });
+                </script>
+                <h1>Authentication Successful</h1>
+                <p>Closing window...</p>
+            </body>
+        </html>
+    """, media_type="text/html")
 
 @app.get("/auth/logout")
 async def auth_logout(response: Response):
